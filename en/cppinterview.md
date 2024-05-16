@@ -487,3 +487,158 @@ Compared to value passing, reference passing offers several advantages:
 1. Cannot return references to local variables because local variables are destroyed after the function returns.
 2. Cannot return references to memory allocated by `new` within the function. Although local variables are not destroyed in this case, the referenced memory may cause a memory leak if not assigned to an actual variable.
 3. Can return references to class members, but it is best to return `const` references to prevent external modification of internal attributes, which can maintain the integrity of business rules.
+
+## 21. What is a Dangling Pointer and How to Avoid It
+A dangling pointer is not a NULL pointer; it is an uninitialized or unset pointer that points to a memory address not intended by the programmer and may point to restricted memory. Causes:
+1. The pointer variable is not initialized.
+2. The memory pointed to by the pointer is freed, but the pointer is not set to NULL.
+3. The pointer exceeds the scope of the variable, such as `b[10]` and the pointer `b+11`.
+
+How to avoid:
+1. **Initialize pointers**: When defining a pointer, immediately initialize it to `nullptr` to avoid uninitialized pointers.
+    ```cpp
+    int* ptr = nullptr;
+    ```
+2. **Nullify pointers promptly**: After freeing memory, immediately set the pointer to `nullptr`.
+    ```cpp
+    delete ptr;
+    ptr = nullptr;
+    ```
+3. **Avoid dangling pointers**: Ensure that the pointer is not used after its lifecycle ends or set it to `nullptr`.
+    ```cpp
+    void foo() {
+        int* ptr = new int;
+        // Use ptr
+        delete ptr;
+        // Nullify the pointer
+        ptr = nullptr;
+    }
+    ```
+4. **Use smart pointers**: Smart pointers help manage memory more conveniently and avoid manual memory deallocation and dangling pointers.
+    ```cpp
+    std::unique_ptr<int> ptr(new int);
+    // No need to manually free memory
+    ```
+    
+Example:
+```cpp
+int* ptr = new int;  // Allocate dynamic memory
+delete ptr;          // Free memory
+ptr = nullptr;       // Nullify the pointer to avoid it becoming a dangling pointer
+```
+In this example, `delete` frees the memory pointed to by `ptr`, and then `ptr` is set to `nullptr` to prevent it from becoming a dangling pointer.
+
+## 22. Memory Leak Situations in C++
+A memory leak occurs when dynamically allocated heap memory is not released or cannot be released, wasting system memory, slowing down the program, or even causing system crashes.
+
+1. `new` and `delete` are not matched in the constructor and destructor of a class.
+2. `delete` is used instead of `delete[]` when freeing an array of objects.
+3. The destructor of the base class is not defined as a virtual function. When a base class pointer points to a derived class object, if the base class destructor is not virtual, the derived class destructor will not be called, leading to a memory leak.
+4. Nested object pointers are not correctly cleared.
+
+## 23. Causes and Solutions of Stack Overflow
+Stack overflow occurs when local variables in a function cause an overflow (note: function parameters and local variables are stored on the stack). The stack size is usually 1M-2M, so stack overflow can happen in two cases: either the allocated size exceeds the maximum stack size, or the allocated size does not exceed the maximum but the received buffer is smaller than the original buffer.
+
+1. Function call depth is too deep. Each call pushes function parameters, local variables, etc., onto the stack.
+2. Local variables are too large.
+
+Solutions:
+1. **Increase stack memory size**: If the allocated size does not exceed the maximum stack size, increase the allocated size.
+2. **Use heap memory**: There are many ways to implement this, such as directly defining arrays as pointers and dynamically allocating memory. Alternatively, convert local variables to global variables. A lazy approach is to add `static` before the definition, making them static variables (essentially global variables).
+
+## 24. Lvalue and Rvalue
+In general terms, an lvalue is a variable (or expression) that can appear on both the left and right side of an assignment operator, while an rvalue can only appear on the right side. For example, a defined variable `a` is an lvalue, and the return value of `malloc` is an rvalue. Lvalues can be addressed, have names, and are non-temporary. Rvalues, on the other hand, cannot be addressed, do not have names, are temporary, and usually exist within an expression's lifespan. However, with C++11, the concept has become slightly more complex, introducing lvalue, glvalue, rvalue, xvalue, and prvalue.
+
+## 25. Lvalue References and Rvalue References
+Lvalue references are what we typically refer to as references. They can usually be considered as aliases for variables.
+```cpp
+type-id & cast-expression
+
+// Demo
+int a = 10;
+int &b = a;
+
+int &c = 10;  // Error, cannot reference an immediate value
+
+const int &d = 10;  // Correct, constant reference can refer to constants
+```
+Rvalue references are a new feature introduced in C++11. Rvalue references are used to bind to rvalues, and the lifespan of the rvalue is extended to the lifespan of the rvalue reference it is bound to.
+- Rvalue references support the implementation of move semantics, reducing copies and improving program efficiency.
+- Rvalue references can make overloaded functions more concise. They can be used in both `const T&` and `T&` parameter forms.
+```cpp
+type-id && cast-expression
+
+// Demo
+int &&var = 10;  // OK
+
+int a = 10;
+int &&b = a;  // Error, a is an lvalue
+
+int &&c = var;  // Error, var is an lvalue
+
+int &&d = std::move(a);  // OK, rvalue reference to a using std::move
+```
+At the assembly level, rvalue references and constant references do the same thing, generating temporaries to store constants. However, the key difference is that rvalue references allow read and write operations, while constant references only allow read operations.
+
+## 26. What are `#ifndef/define/endif` in Header Files Used For? What is the Difference from `#pragma once`?
+Similarities: Their purpose is to prevent a header file from being included multiple times.
+Differences:
+1. `#ifndef` is supported by the language itself, whereas `#pragma once` is generally supported by the compiler, meaning it might not be supported by some older compilers.
+2. In terms of runtime performance, `#ifndef` is generally slower than `#pragma once`, especially in large projects, so more compilers are starting to support `#pragma once`.
+3. `#ifndef` applies to a block of code between `define` and `endif`, while `#pragma once` applies to the entire file containing the statement, which is why `#pragma once` is faster.
+4. If `#ifndef` is used to wrap a macro definition, a name collision might occur, leading to a macro undefined error in the program (especially in large programs with many developers writing code simultaneously). In contrast, `#pragma once` applies to the entire file, avoiding name collision issues. However, if a header file is copied multiple times, `#pragma once` cannot ensure the file is not included multiple times, as `#pragma once` determines the same header file physically, not by its content.
+
+## 27. Differences Between Pointer Arrays and Array Pointers
+An array pointer is a pointer to an array, while a pointer array is an array whose elements are pointers.
+
+1. An array pointer is a pointer to an array. Essentially, it is a pointer. The syntax is as follows: `int (*p)[n]`, where `p` is a pointer to an array of integers of length `n`. The parentheses indicate that `p` is a pointer, and it points to a one-dimensional array of integers of length `n`. This means that when `p+1` is executed, `p` skips over `n` integers. An array pointer is a pointer to the address of the first element of the array and can be considered a double pointer.
+    ```cpp
+    type-id (*array-identifier)[array-length]
+    ```
+
+2. A pointer array is an array in which all elements are pointers. In C and C++, an array whose elements are all pointers is called a pointer array. The syntax for defining a one-dimensional pointer array is as follows: `int* p[n]`. The square brackets have higher precedence, so `p` is first recognized as an array, and then `int*` indicates that it is an array of integer pointers with `n` elements. When `p+1` is executed, `p` points to the next array element. The assignment `p = a` is incorrect because `p` is an array identifier and exists only as `p[0], p[1], p[2], ..., p[n-1]`, each being a pointer variable that can store addresses of variables. However, the assignment `p[0] = a` is correct, as `p[0]` is a pointer element of the array.
+    ```cpp
+    type-id* array-identifier[array-length]
+    ```
+
+## 28. Is C++ Type-Safe?
+No. Pointers of different types can be forcibly cast.
+
+## 29. What Executes Before the `main` Function?
+Before a C++ program executes, several initialization steps occur, including the following:
+
+1. **Runtime environment initialization**: The runtime environment initializes global variables and static variables.
+2. **Global object constructors**: If global objects (including global and static variables) exist, their constructors are called before the `main` function executes.
+3. **Setting `argc` and `argv`**: The number and content of command-line arguments are set.
+4. **Static variable constructors**: Constructors of static variables are called before the `main` function executes.
+5. **Global object constructors**: For global objects, their constructors are called before the `main` function executes.
+
+Example:
+```cpp
+#include <iostream>
+
+class GlobalObject {
+public:
+    GlobalObject() {
+        std::cout << "GlobalObject constructed" << std::endl;
+    }
+
+    ~GlobalObject() {
+        std::cout << "GlobalObject destroyed" << std::endl;
+    }
+};
+
+GlobalObject globalObject;  // Global object
+
+int main() {
+    std::cout << "Main function" << std::endl;
+    return 0;
+}
+```
+In this example, the global object `globalObject` is constructed before the `main` function executes, outputting "GlobalObject constructed". After the `main` function completes, the global object is destroyed, outputting "GlobalObject destroyed".
+
+## 30. Differences Between Global Variables and Local Variables? How are They Implemented? How do the Operating System and Compiler Recognize Them?
+1. **Different lifetimes**: Global variables are created with the main program and destroyed with the main program. Local variables exist within local functions or local loops and cease to exist after exiting them. Global variables are allocated in the global data area.
+2. **Different usage**: After declaration, global variables can be used throughout the program, while local variables can only be used locally and are allocated on the stack.
+
+The operating system and compiler distinguish them by their memory allocation locations. Global variables are allocated in the global data segment and are loaded when the program starts running. Local variables are allocated on the stack.
