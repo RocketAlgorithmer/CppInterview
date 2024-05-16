@@ -332,7 +332,7 @@ The `const` keyword improves readability, maintainability, and helps prevent uni
 
 The `static` keyword helps control the scope and lifetime of variables and functions, enhancing code structure, security, and maintainability.
 
-**11. Differences between Heap and Stack**
+## 11. Differences between Heap and Stack
 
 1. **Space Allocation Differences:**
    - **Stack (Operating System):** Automatically allocated and released by the operating system. It stores function parameter values, local variables, etc. Its operation is similar to the stack data structure.
@@ -359,29 +359,29 @@ The `static` keyword helps control the scope and lifetime of variables and funct
 - **Heap:** A term used in C and operating systems, referring to a dynamically allocated memory area maintained by the OS.
 - **Free Store:** A C++ concept for dynamic allocation and deallocation of objects using new and delete. It's an abstract concept, not entirely the same as the heap. Most C++ compilers implement the free store using the heap, making them functionally similar.
 
-**12. Difference between #include <file.h> and #include "file.h"**
+## 12. Difference between #include <file.h> and #include "file.h"
 - The former searches in the standard library path.
 - The latter searches in the current working directory.
 
-**13. What is Memory Leak? How to Handle Memory Leak and Pointer Out-of-Bounds?**
+## 13. What is Memory Leak? How to Handle Memory Leak and Pointer Out-of-Bounds?
 - **Memory Leak:** Occurs when dynamically allocated memory is not freed, leading to wasted memory resources.
 - **Methods:**
   - Ensure malloc/free are paired.
   - Check if the pointer being assigned needs to be freed.
   - Track pointer lengths to prevent out-of-bounds access.
 
-**14. Difference between Definition and Declaration:**
+## 14. Difference between Definition and Declaration:
 - **Definition:** Allocates memory and storage space for a variable.
 - **Declaration:** Does not allocate memory; a variable can be declared multiple times but defined only once.
 - **extern Modifier:** Indicates a variable is declared but will be defined elsewhere or later in the file.
 
-**15. Four Stages of C++ File Compilation and Execution:**
+## 15. Four Stages of C++ File Compilation and Execution:
 1. **Preprocessing:** Modifies source file content based on preprocessing directives.
 2. **Compilation:** Converts source code to assembly code.
 3. **Assembly:** Translates assembly code to machine code instructions.
 4. **Linking:** Links object code to create an executable program.
 
-**16. C++ Memory Management**
+## 16. C++ Memory Management
 Memory allocation in C/C++ programs involves several areas:
 
 ● **Stack Area**
@@ -398,7 +398,7 @@ Stores the binary code of function bodies (class member functions and global fun
 
 You can use the `size` command and `objdump` to view the structure and content of the target file:
 
-**17. Four Types of Casting in C++**
+## 17. Four Types of Casting in C++
 Type conversion mechanisms can be divided into implicit type conversion and explicit type conversion (type casting).
 
 - `(new-type) expression` or `new-type(expression)`
@@ -436,10 +436,10 @@ Implicit type conversion is common, often occurring in mixed-type expressions. T
 **Why not use C-style casting?**
 C-style casting appears powerful and can convert anything but lacks clarity, cannot perform error checks, and is prone to errors.
 
-**18. Purpose of extern "C"**
+## 18. Purpose of extern "C"
 The primary purpose of `extern "C"` is to enable C++ code to correctly call other C language code. Adding `extern "C"` directs the compiler to compile the specified code as C language rather than C++.
 
-**19. Difference Between typedef and #define**
+## 19. Difference Between typedef and #define
 Both `typedef` and `#define` can create type aliases, but there are important differences:
 
 1. **typedef:**
@@ -466,7 +466,7 @@ Both `typedef` and `#define` can create type aliases, but there are important di
 - `typedef` is a C++ keyword used to create type aliases, resulting in a new type name.
 - `#define` is a preprocessor directive for creating macros that can define constants, functions, expressions, etc., not limited to type aliases.
 
-**20. Benefits of Using References as Function Parameters and Return Values**
+## 20. Benefits of Using References as Function Parameters and Return Values
 Compared to value passing, reference passing offers several advantages:
 1. Parameters can be modified within the function.
 2. Improves function call and execution efficiency (eliminates the time and space overhead of copying values).
