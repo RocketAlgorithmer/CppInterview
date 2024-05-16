@@ -1,14 +1,13 @@
 <div align="center">
 📖 Github
 &emsp;&emsp; | &emsp;&emsp;
-<a href="https://interview.huihut.com">📚 Docsify</a>
 </div> 
 <br>
 
 <div align="center">
 简体中文
 &emsp;&emsp; | &emsp;&emsp;
-<a href="https://github.com/RocketAlgorithmer/CppInterview/blob/main/README_en.md">English</a>
+<a href="https://github.com/RocketAlgorithmer/CppInterview/blob/main/en/cppinterview.md">English</a>
 </div> 
 <br>
 
