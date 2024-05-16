@@ -331,3 +331,159 @@ The `const` keyword improves readability, maintainability, and helps prevent uni
    ```
 
 The `static` keyword helps control the scope and lifetime of variables and functions, enhancing code structure, security, and maintainability.
+
+**11. Differences between Heap and Stack**
+
+1. **Space Allocation Differences:**
+   - **Stack (Operating System):** Automatically allocated and released by the operating system. It stores function parameter values, local variables, etc. Its operation is similar to the stack data structure.
+   - **Heap (Operating System):** Generally allocated and released by the programmer. If not released by the programmer, it may be reclaimed by the OS when the program ends. Its allocation is similar to a linked list.
+
+2. **Caching Differences:**
+   - **Stack:** Stores value types in memory, with a size limit of 2M on Windows (8M by default on Linux, configurable). Exceeding this limit causes errors or memory overflow.
+   - **Heap:** Stores reference data types in memory. The size of reference data types is indeterminate. The heap is a linked list structure using scattered memory space, with its size directly determined by the size of reference types, which changes dynamically.
+
+3. **Data Structure Differences:**
+   - **Heap (Data Structure):** Can be viewed as a tree, e.g., heap sort.
+   - **Stack (Data Structure):** A LIFO (Last In, First Out) data structure.
+
+**Differences in Heap and Stack in C++ Memory Regions:**
+
+- **Management:** The stack is automatically managed by the compiler, requiring no manual control. Heap management is done by the programmer, potentially leading to memory leaks.
+- **Space Size:** In a 32-bit system, heap memory can reach up to 4G, making it nearly unlimited. Stack memory has a fixed size, e.g., 1M by default in VC6, modifiable via project settings.
+- **Fragmentation:** Frequent new/delete operations on the heap can cause memory fragmentation, reducing program efficiency. The stack does not have this issue.
+- **Growth Direction:** The heap grows upwards (towards increasing memory addresses), while the stack grows downwards (towards decreasing memory addresses).
+- **Allocation Method:** The heap is dynamically allocated, whereas the stack is statically allocated by the compiler for local variables.
+- **Allocation Efficiency:** The stack, supported by the machine system with specialized instructions and registers, is more efficient. The heap, managed by C/C++ library functions, has a more complex mechanism, resulting in lower efficiency.
+
+**Heap vs. Free Store:**
+- **Heap:** A term used in C and operating systems, referring to a dynamically allocated memory area maintained by the OS.
+- **Free Store:** A C++ concept for dynamic allocation and deallocation of objects using new and delete. It's an abstract concept, not entirely the same as the heap. Most C++ compilers implement the free store using the heap, making them functionally similar.
+
+**12. Difference between #include <file.h> and #include "file.h"**
+- The former searches in the standard library path.
+- The latter searches in the current working directory.
+
+**13. What is Memory Leak? How to Handle Memory Leak and Pointer Out-of-Bounds?**
+- **Memory Leak:** Occurs when dynamically allocated memory is not freed, leading to wasted memory resources.
+- **Methods:**
+  - Ensure malloc/free are paired.
+  - Check if the pointer being assigned needs to be freed.
+  - Track pointer lengths to prevent out-of-bounds access.
+
+**14. Difference between Definition and Declaration:**
+- **Definition:** Allocates memory and storage space for a variable.
+- **Declaration:** Does not allocate memory; a variable can be declared multiple times but defined only once.
+- **extern Modifier:** Indicates a variable is declared but will be defined elsewhere or later in the file.
+
+**15. Four Stages of C++ File Compilation and Execution:**
+1. **Preprocessing:** Modifies source file content based on preprocessing directives.
+2. **Compilation:** Converts source code to assembly code.
+3. **Assembly:** Translates assembly code to machine code instructions.
+4. **Linking:** Links object code to create an executable program.
+
+**16. C++ Memory Management**
+Memory allocation in C/C++ programs involves several areas:
+
+● **Stack Area**
+When a function executes, the storage units for local variables within the function can be created on the stack. These storage units are automatically released when the function execution ends. Stack memory allocation operations are built into the processor's instruction set, making it highly efficient, but the allocated memory capacity is limited. The stack area primarily stores local variables, function parameters, return data, return addresses, etc., allocated during function execution.
+
+● **Heap Area**
+Generally allocated and released by the programmer. If not released by the programmer, it may be reclaimed by the OS when the program ends. The allocation method is similar to a linked list.
+
+● **Data Segment (Static Area)**
+Stores global variables and static data. The system releases this area after the program ends.
+
+● **Code Segment**
+Stores the binary code of function bodies (class member functions and global functions).
+
+You can use the `size` command and `objdump` to view the structure and content of the target file:
+
+**17. Four Types of Casting in C++**
+Type conversion mechanisms can be divided into implicit type conversion and explicit type conversion (type casting).
+
+- `(new-type) expression` or `new-type(expression)`
+  
+Implicit type conversion is common, often occurring in mixed-type expressions. The four type-casting operators are `static_cast`, `dynamic_cast`, `const_cast`, and `reinterpret_cast`.
+
+1. **static_cast:** 
+   Performs compile-time type checking. It's similar to C-style casting but cannot perform arbitrary pointer data casts (except for null pointers). It is generally used for conversions between pointers and references in parent-child relationships. There is no runtime type check to ensure the safety of the cast.
+   - Used for conversions between base class (parent class) and derived class (child class) pointers or references within class hierarchies. The compiler won't report errors regardless of whether polymorphism occurs.
+     ● Upcasting (converting a derived class pointer or reference to a base class representation) is safe.
+     ● Downcasting (converting a base class pointer or reference to a derived class representation) is unsafe without dynamic type checks, but the compiler won't report errors.
+   - Used for conversions between basic data types, such as converting `int` to `char` or `int` to `enum`. The developer must ensure the safety of such conversions.
+   - Converts null pointers to target type null pointers.
+   - Converts any pointer type to a null pointer type.
+   - Can convert `const` and `non-const` on ordinary data but cannot add or remove `const` on pointers to ordinary data.
+   - Cannot convert unrelated custom types and does not support cross-class conversions.
+   - Cannot convert away `const`, `volatile`, or `__unaligned` attributes. (Use `const_cast` for the first two.)
+
+2. **dynamic_cast:**
+   Performs runtime checks. The dynamic type and operands must be complete class types or null pointers/references. It is mainly used for conversions between pointers or references within class hierarchies.
+   - Upcasting is safe and allowed.
+   - Downcasting without dynamic type checks is unsafe and disallowed; the compiler will report errors.
+   - Allows mutual conversion in the presence of polymorphism.
+   - Allows cross-class conversions between unrelated classes.
+   - If a `dynamic_cast` statement's target is a pointer type and the conversion fails, the result is `0`. If the target is a reference type and the conversion fails, the `dynamic_cast` operator throws a `std::bad_cast` exception.
+
+3. **const_cast:**
+   Used to remove the `const` attribute from objects, typically pointers or references.
+
+4. **reinterpret_cast:**
+   In C++, `reinterpret_cast` is mainly used for:
+   - Converting a pointer or reference to an integer type of sufficient length.
+   - Converting an integer type to a pointer or reference type.
+
+**Why not use C-style casting?**
+C-style casting appears powerful and can convert anything but lacks clarity, cannot perform error checks, and is prone to errors.
+
+**18. Purpose of extern "C"**
+The primary purpose of `extern "C"` is to enable C++ code to correctly call other C language code. Adding `extern "C"` directs the compiler to compile the specified code as C language rather than C++.
+
+**19. Difference Between typedef and #define**
+Both `typedef` and `#define` can create type aliases, but there are important differences:
+
+1. **typedef:**
+   - A C++ keyword used to create aliases for existing types.
+   - The alias created by `typedef` is a new type name that can be used anywhere.
+   - `typedef` does not create macros, avoiding potential macro-related issues.
+   - Example:
+     ```cpp
+     typedef int Integer;  // Creates an alias Integer for int
+     Integer num = 10;
+     ```
+
+2. **#define:**
+   - A preprocessor directive in C/C++ used to define macros.
+   - `#define` creates simple text replacements, not new types.
+   - `#define` can define constants, functions, expressions, etc., not limited to type aliases.
+   - Example:
+     ```cpp
+     #define INTEGER int  // Creates a macro alias INTEGER for int
+     INTEGER num = 10;
+     ```
+
+**Summary of Differences:**
+- `typedef` is a C++ keyword used to create type aliases, resulting in a new type name.
+- `#define` is a preprocessor directive for creating macros that can define constants, functions, expressions, etc., not limited to type aliases.
+
+**20. Benefits of Using References as Function Parameters and Return Values**
+Compared to value passing, reference passing offers several advantages:
+1. Parameters can be modified within the function.
+2. Improves function call and execution efficiency (eliminates the time and space overhead of copying values).
+
+**Value Passing:**
+- The formal parameter is a copy of the actual parameter, and modifying the formal parameter does not affect the external actual parameter. From the called function's perspective, value passing is unidirectional (actual parameter -> formal parameter), allowing the parameter's value to be passed in but not out. When the function needs to modify a parameter without affecting the caller, value passing is used.
+
+**Pointer Passing:**
+- The formal parameter is a pointer to the actual parameter's address. Operations on the formal parameter affect the actual parameter directly.
+
+**Reference Passing:**
+- The formal parameter is an alias for the actual parameter. Operations on the formal parameter are actually operations on the actual parameter. During reference passing, the formal parameter is stored in the stack as a local variable but holds the address of the actual parameter. Thus, any operation on the formal parameter affects the actual parameter.
+
+**Benefits of Using References as Return Values:**
+- No copies of the returned value are created in memory.
+
+**Restrictions:**
+1. Cannot return references to local variables because local variables are destroyed after the function returns.
+2. Cannot return references to memory allocated by `new` within the function. Although local variables are not destroyed in this case, the referenced memory may cause a memory leak if not assigned to an actual variable.
+3. Can return references to class members, but it is best to return `const` references to prevent external modification of internal attributes, which can maintain the integrity of business rules.
